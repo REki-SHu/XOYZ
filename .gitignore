@@ -1,0 +1,33 @@
+# XOYZ .gitignore
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Android SDK
+local.properties
+
+# IDE (in case anyone opens with one)
+.idea/
+*.iml
+.vscode/
+.zed/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# APK / AAB
+*.apk
+*.aab
+*.ap_
+
+# Build outputs (no app/ subfolder — single-module at root)
+# build/ is already covered above
+
+# Kotlin
+*.class
+
+# Logs
+*.log

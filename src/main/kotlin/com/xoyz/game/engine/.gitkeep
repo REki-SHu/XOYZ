@@ -1,0 +1,3 @@
+# 3D Rendering Engine
+# Cube renderer, camera controller, input handler, symbol renderer
+# LibGDX or raw OpenGL ES integration lives here.

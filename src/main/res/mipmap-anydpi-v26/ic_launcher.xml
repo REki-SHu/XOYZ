@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- TODO: Replace with actual icon drawables -->
+    <background android:drawable="@color/player1_primary"/>
+    <foreground android:drawable="@color/player1_primary"/>
+</adaptive-icon>

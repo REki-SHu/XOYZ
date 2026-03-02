@@ -1,0 +1,3 @@
+# Core Game Logic
+# Board state, rules engine, turn manager, game session
+# This module is pure Kotlin — no Android or rendering dependencies.
