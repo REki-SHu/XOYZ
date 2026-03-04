@@ -26,7 +26,7 @@ A twist on classic Tic-Tac-Toe played on a **3×3×3 cube** with **four symbols*
 | Platform         | Native Android                     |
 | 3D Rendering     | LibGDX (or raw OpenGL ES)          |
 | Build System     | Gradle (Kotlin DSL) + AGP          |
-| Multiplayer      | TBD (Firebase / custom server)     |
+| Multiplayer      | Firebase RTDB                      |
 
 ## Prerequisites
 

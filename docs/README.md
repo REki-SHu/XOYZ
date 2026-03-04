@@ -7,6 +7,7 @@ This directory contains all design documents, architecture notes, and implementa
 | Document | Description |
 |----------|-------------|
 | [ARCHITECTURE.md](ARCHITECTURE.md) | High-level system architecture & module breakdown |
+| [TECHNICAL_APPROACH.md](TECHNICAL_APPROACH.md) | Technical decisions (Multiplayer Strategy & Win Algorithms) |
 | [RULES.md](RULES.md) | Game rules (work in progress) |
 | [RENDERING.md](RENDERING.md) | 3D rendering approach & engine decisions |
 | [MULTIPLAYER.md](MULTIPLAYER.md) | Multiplayer architecture & networking |

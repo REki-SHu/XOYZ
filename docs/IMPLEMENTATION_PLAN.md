@@ -15,10 +15,10 @@
 - [ ] **Player model**: `Player` data class (id, name, symbols)
 - [ ] **Move model**: `Move` data class (player, symbol, position)
 - [ ] **Turn manager**: Tracks whose turn it is, validates turn order
-- [ ] **Rules engine**: (placeholder until rules are finalized)
-  - `isValidMove(board, move): Boolean`
-  - `checkWin(board): WinResult?`
-  - `getWinningLines(): List<Line3D>`
+- [ ] **Rules engine**: (Implement using Bitboards / Precomputed Masks)
+  - `isValidMove(board, move): Boolean` (Check if cell is EMPTY)
+  - `checkWin(playerBoard: Int): Boolean` (Bitwise AND with 49 winning masks)
+  - `getWinningLines(): List<IntArray>` (Precomputed lines for rendering)
 - [ ] **Game session**: Orchestrates a full game (init → moves → end)
 - [ ] **Unit tests**: Cover all core logic
 
