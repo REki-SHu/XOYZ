@@ -26,6 +26,13 @@
             </intent-filter>
         </activity>
 
+         <!-- Local two-player game screen -->
+        <activity
+            android:name=".ui.LocalGameActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+            
+
     </application>
 
 </manifest>

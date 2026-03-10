@@ -53,10 +53,19 @@ android {
 }
 
 dependencies {
-    // AndroidX
+    // AndroidX core
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
+
+     // ViewModel + LiveData (for GameViewModel)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
+    implementation("androidx.activity:activity-ktx:1.8.2")
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // Phase 2: LibGDX for 3D rendering (uncomment when ready)
+    // ──────────────────────────────────────────────────────────────────────────
 
     // LibGDX (uncomment when ready for 3D rendering)
     // val gdxVersion = "1.12.1"
@@ -67,6 +76,10 @@ dependencies {
     // natives("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86")
     // natives("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64")
 
+    // ──────────────────────────────────────────────────────────────────────────
+    // Phase 4: Firebase for multiplayer (uncomment when ready)
+    // ──────────────────────────────────────────────────────────────────────────
+    
     // Firebase (uncomment when ready for multiplayer)
     // implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
     // implementation("com.google.firebase:firebase-database-ktx")
