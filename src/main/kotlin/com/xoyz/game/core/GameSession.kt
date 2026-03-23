@@ -1,135 +1,56 @@
 package com.xoyz.game.core
 
-/**
- * Result of attempting to apply a [Move] to a [GameSession].
- */
-sealed class MoveResult {
-    /** Move was accepted; [newSession] is the updated session. */
-    data class Accepted(val newSession: GameSession) : MoveResult()
-
-    /** Move was rejected; [reason] explains why. */
-    data class Rejected(val reason: String) : MoveResult()
+enum class GameStatus {
+    IN_PROGRESS,
+    PLAYER1_WINS,
+    PLAYER2_WINS,
+    DRAW
 }
 
 /**
- * Immutable snapshot of a complete game session.
+ * Orchestrates a full game session.
  *
- * [GameSession] orchestrates [Board], [TurnManager], [MoveValidator],
- * [RulesEngine], and [Move] history following the SOLID principles:
- *
- *  - **S** — Each concern lives in its own class.
- *  - **O** — Swap implementations via constructor injection.
- *  - **L** — All collaborators are interchangeable by their interfaces.
- *  - **I** — Narrow interfaces: [WinChecker], [MoveValidator], [TurnManager].
- *  - **D** — [GameSession] depends on abstractions, not concrete classes.
- *
- * Applying a move returns a *new* [GameSession]; the original is unchanged.
- * This makes the history list trivially safe to inspect or undo.
- *
- * @param player1       First player (always moves first).
- * @param player2       Second player.
- * @param board         Current board snapshot.
- * @param turnManager   Tracks whose turn it is.
- * @param moveValidator Validates move legality.
- * @param rulesEngine   Evaluates win/draw conditions.
- * @param history       Ordered list of moves applied so far.
- * @param state         Current [GameState].
+ * Turn order: Player 1 (X/Y) and Player 2 (O/Z) alternate.
+ * Symbol selection rule (simple default): Player 1 alternates X→Y→X…,
+ * Player 2 alternates O→Z→O…. This can be made player-choice later.
  */
-class GameSession private constructor(
-    val player1: Player,
-    val player2: Player,
-    val board: Board,
-    private val turnManager: TurnManager,
-    private val moveValidator: MoveValidator,
-    private val rulesEngine: RulesEngine,
-    val history: List<Move>,
-    val state: GameState
-) {
+class GameSession {
+    val board = Board()
+    var status: GameStatus = GameStatus.IN_PROGRESS
+        private set
 
-    /** The player who should move next (only meaningful while [state] is [GameState.InProgress]). */
-    val currentPlayer: Player get() = turnManager.currentPlayer
+    var isPlayer1Turn: Boolean = true
+        private set
 
-    /** Convenience: returns true if the game is still going. */
-    val isInProgress: Boolean get() = state is GameState.InProgress
+    private var p1MoveCount = 0
+    private var p2MoveCount = 0
 
-    // ─── Core operation ───────────────────────────────────────────────────────
+    /** Returns true if the move was accepted, false if invalid. */
+    fun makeMove(layer: Int, row: Int, col: Int): Boolean {
+        if (status != GameStatus.IN_PROGRESS) return false
+        if (!RulesEngine.isValidMove(board, layer, row, col)) return false
 
-    /**
-     * Attempts to apply [move] to this session.
-     *
-     * @return [MoveResult.Accepted] with a fully updated [GameSession], or
-     *         [MoveResult.Rejected] with a human-readable reason.
-     */
-    fun applyMove(move: Move): MoveResult {
-        if (!isInProgress) {
-            return MoveResult.Rejected("The game has already ended: $state")
+        val symbol = nextSymbol()
+        board.setCell(layer, row, col, symbol)
+
+        if (isPlayer1Turn) p1MoveCount++ else p2MoveCount++
+
+        val flat = board.getFlat()
+        status = when {
+            RulesEngine.checkWin(flat) { it.isPlayer1 } -> GameStatus.PLAYER1_WINS
+            RulesEngine.checkWin(flat) { it.isPlayer2 } -> GameStatus.PLAYER2_WINS
+            board.isFull()                              -> GameStatus.DRAW
+            else                                        -> GameStatus.IN_PROGRESS
         }
 
-        val validation = moveValidator.validate(board, move, currentPlayer)
-        if (!validation.isValid) {
-            return MoveResult.Rejected((validation as ValidationResult.Invalid).reason)
-        }
-
-        val newBoard    = board.withMove(move.position, move.symbol)
-        val newHistory  = history + move
-        val newState    = rulesEngine.evaluate(newBoard, move, listOf(player1, player2))
-        val newTurn     = turnManager.advance()
-
-        val newSession = GameSession(
-            player1        = player1,
-            player2        = player2,
-            board          = newBoard,
-            turnManager    = newTurn,
-            moveValidator  = moveValidator,
-            rulesEngine    = rulesEngine,
-            history        = newHistory,
-            state          = newState
-        )
-        return MoveResult.Accepted(newSession)
+        if (status == GameStatus.IN_PROGRESS) isPlayer1Turn = !isPlayer1Turn
+        return true
     }
 
-    // ─── Factory ──────────────────────────────────────────────────────────────
-
-    companion object {
-
-        /**
-         * Creates a brand-new game session with the default collaborators.
-         *
-         * @param player1Name Display name for Player 1 (default "Player 1").
-         * @param player2Name Display name for Player 2 (default "Player 2").
-         */
-        fun newGame(
-            player1Name: String = "Player 1",
-            player2Name: String = "Player 2"
-        ): GameSession = create(
-            player1 = Player.player1(player1Name),
-            player2 = Player.player2(player2Name)
-        )
-
-        /**
-         * Creates a game session with custom [Player] objects and optionally
-         * custom collaborator implementations (useful for testing).
-         */
-        fun create(
-            player1: Player,
-            player2: Player,
-            board: Board             = Board.empty(),
-            moveValidator: MoveValidator = DefaultMoveValidator(),
-            rulesEngine: RulesEngine     = StandardRulesEngine(),
-            history: List<Move>          = emptyList(),
-            state: GameState             = GameState.InProgress
-        ): GameSession {
-            val turnManager: TurnManager = AlternatingTurnManager(listOf(player1, player2))
-            return GameSession(
-                player1       = player1,
-                player2       = player2,
-                board         = board,
-                turnManager   = turnManager,
-                moveValidator = moveValidator,
-                rulesEngine   = rulesEngine,
-                history       = history,
-                state         = state
-            )
-        }
+    /** Simple alternating symbol selection: X Y X Y … / O Z O Z … */
+    private fun nextSymbol(): CellState = if (isPlayer1Turn) {
+        if (p1MoveCount % 2 == 0) CellState.X else CellState.Y
+    } else {
+        if (p2MoveCount % 2 == 0) CellState.O else CellState.Z
     }
 }

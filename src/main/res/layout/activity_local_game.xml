@@ -1,53 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    Local game screen layout.
-    A FrameLayout that hosts:
-      - The 3D rendering surface (Phase 2: LibGDX GLSurfaceView / SurfaceView)
-      - An overlay HUD showing the current player and their symbols
--->
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background_dark">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:background="@color/background_dark"
+              android:padding="12dp">
 
-    <!--
-        Phase 2: Replace this placeholder with a LibGDX AndroidFragmentApplication
-        or a raw android.opengl.GLSurfaceView.
-    -->
-    <View
-        android:id="@+id/game_surface"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <!-- HUD overlay at the top of the screen -->
-    <LinearLayout
-        android:id="@+id/hud_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:background="#80000000"
-        android:gravity="center_vertical">
-
-        <TextView
-            android:id="@+id/tv_current_player"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+    <!-- Turn indicator -->
+    <TextView
+            android:id="@+id/tvTurnIndicator"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Player 1's turn"
+            android:text="Player 1's turn  (X / Y)"
             android:textColor="#FFFFFF"
-            android:textSize="16sp" />
+            android:textSize="18sp"
+            android:gravity="center"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp" />
 
-        <TextView
-            android:id="@+id/tv_symbols"
-            android:layout_width="wrap_content"
+    <!-- Layer tabs -->
+    <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="X / Y"
-            android:textColor="@color/player1_primary"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+
+        <Button
+                android:id="@+id/btnLayer0"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="Top"
+                android:textSize="13sp"
+                android:layout_marginEnd="4dp" />
+
+        <Button
+                android:id="@+id/btnLayer1"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="Middle"
+                android:textSize="13sp"
+                android:layout_marginEnd="4dp" />
+
+        <Button
+                android:id="@+id/btnLayer2"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="Bottom"
+                android:textSize="13sp" />
 
     </LinearLayout>
 
-</FrameLayout>
+    <!-- Layer 0 (Top) -->
+    <GridLayout
+            android:id="@+id/gridLayer0"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:rowCount="3"
+            android:columnCount="3"
+            android:visibility="visible">
+
+        <Button android:id="@+id/cell_0_0_0" style="@style/CellButton" android:layout_row="0" android:layout_column="0" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+        <Button android:id="@+id/cell_0_0_1" style="@style/CellButton" android:layout_row="0" android:layout_column="1" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+        <Button android:id="@+id/cell_0_0_2" style="@style/CellButton" android:layout_row="0" android:layout_column="2" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+        <Button android:id="@+id/cell_0_1_0" style="@style/CellButton" android:layout_row="1" android:layout_column="0" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+        <Button android:id="@+id/cell_0_1_1" style="@style/CellButton" android:layout_row="1" android:layout_column="1" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+        <Button android:id="@+id/cell_0_1_2" style="@style/CellButton" android:layout_row="1" android:layout_column="2" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+        <Button android:id="@+id/cell_0_2_0" style="@style/CellButton" android:layout_row="2" android:layout_column="0" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+        <Button android:id="@+id/cell_0_2_1" style="@style/CellButton" android:layout_row="2" android:layout_column="1" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+        <Button android:id="@+id/cell_0_2_2" style="@style/CellButton" android:layout_row="2" android:layout_column="2" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+
+    </GridLayout>
+
+    <!-- Layer 1 (Middle) -->
+    <GridLayout
+            android:id="@+id/gridLayer1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:rowCount="3"
+            android:columnCount="3"
+            android:visibility="gone">
+
+        <Button android:id="@+id/cell_1_0_0" style="@style/CellButton" android:layout_row="0" android:layout_column="0" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+        <Button android:id="@+id/cell_1_0_1" style="@style/CellButton" android:layout_row="0" android:layout_column="1" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+        <Button android:id="@+id/cell_1_0_2" style="@style/CellButton" android:layout_row="0" android:layout_column="2" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+        <Button android:id="@+id/cell_1_1_0" style="@style/CellButton" android:layout_row="1" android:layout_column="0" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+        <Button android:id="@+id/cell_1_1_1" style="@style/CellButton" android:layout_row="1" android:layout_column="1" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+        <Button android:id="@+id/cell_1_1_2" style="@style/CellButton" android:layout_row="1" android:layout_column="2" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+        <Button android:id="@+id/cell_1_2_0" style="@style/CellButton" android:layout_row="2" android:layout_column="0" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+        <Button android:id="@+id/cell_1_2_1" style="@style/CellButton" android:layout_row="2" android:layout_column="1" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+        <Button android:id="@+id/cell_1_2_2" style="@style/CellButton" android:layout_row="2" android:layout_column="2" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+
+    </GridLayout>
+
+    <!-- Layer 2 (Bottom) -->
+    <GridLayout
+            android:id="@+id/gridLayer2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:rowCount="3"
+            android:columnCount="3"
+            android:visibility="gone">
+
+        <Button android:id="@+id/cell_2_0_0" style="@style/CellButton" android:layout_row="0" android:layout_column="0" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+        <Button android:id="@+id/cell_2_0_1" style="@style/CellButton" android:layout_row="0" android:layout_column="1" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+        <Button android:id="@+id/cell_2_0_2" style="@style/CellButton" android:layout_row="0" android:layout_column="2" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+        <Button android:id="@+id/cell_2_1_0" style="@style/CellButton" android:layout_row="1" android:layout_column="0" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+        <Button android:id="@+id/cell_2_1_1" style="@style/CellButton" android:layout_row="1" android:layout_column="1" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+        <Button android:id="@+id/cell_2_1_2" style="@style/CellButton" android:layout_row="1" android:layout_column="2" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+        <Button android:id="@+id/cell_2_2_0" style="@style/CellButton" android:layout_row="2" android:layout_column="0" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+        <Button android:id="@+id/cell_2_2_1" style="@style/CellButton" android:layout_row="2" android:layout_column="1" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+        <Button android:id="@+id/cell_2_2_2" style="@style/CellButton" android:layout_row="2" android:layout_column="2" android:layout_rowWeight="1" android:layout_columnWeight="1" />
+
+    </GridLayout>
+
+</LinearLayout>

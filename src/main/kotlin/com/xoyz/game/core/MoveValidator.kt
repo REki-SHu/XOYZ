@@ -3,18 +3,8 @@ package com.xoyz.game.core
 /**
  * Contract for validating a proposed [Move] against the current [Board]
  * and the [Player] whose turn it is.
- *
- * Keeping validation behind an interface allows the rules to be swapped
- * or mocked in tests without touching the [GameSession].
  */
 interface MoveValidator {
-    /**
-     * Returns a [ValidationResult] describing whether [move] is legal.
-     *
-     * @param board         The current board snapshot.
-     * @param move          The proposed move.
-     * @param currentPlayer The player whose turn it currently is.
-     */
     fun validate(board: Board, move: Move, currentPlayer: Player): ValidationResult
 }
 
@@ -35,7 +25,6 @@ sealed class ValidationResult {
  *  1. It is the correct player's turn.
  *  2. The player owns the symbol they want to place.
  *  3. The target cell is empty.
- *  4. The game is still in progress (enforced by [GameSession]).
  */
 class DefaultMoveValidator : MoveValidator {
 
@@ -57,10 +46,12 @@ class DefaultMoveValidator : MoveValidator {
             )
         }
 
-        if (!board.isEmpty(move.position)) {
-            val existing = board.getCell(move.position)
+        // Unpack BoardPosition into the 3 Int parameters Board.getCell() expects
+        val pos = move.position
+        val existing = board.getCell(pos.layer, pos.row, pos.col)
+        if (existing != CellState.EMPTY) {
             return ValidationResult.Invalid(
-                "Cell ${move.position} is already occupied by $existing."
+                "Cell $pos is already occupied by $existing."
             )
         }
 

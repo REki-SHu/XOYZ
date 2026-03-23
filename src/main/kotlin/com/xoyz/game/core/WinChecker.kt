@@ -18,20 +18,24 @@ interface WinChecker {
 /**
  * Bitboard-based [WinChecker].
  *
- * The algorithm:
- *  1. Build an Int bitmask where bit *i* is set for every cell owned by [player]
- *     (either of their two symbols).
+ * Algorithm:
+ *  1. Build an Int bitmask where bit i is set for every cell owned by [player].
  *  2. Iterate over the 49 precomputed winning masks from [WinningLinesTable].
- *  3. If `(playerMask AND winMask) == winMask`, the player occupies all three
- *     cells of that line → win detected.
+ *  3. If (playerMask AND winMask) == winMask → win detected.
  *
- * Complexity: O(49) bitwise AND operations — effectively constant time.
+ * Complexity: O(27) to build mask + O(49) AND checks — effectively constant.
  */
 class BitboardWinChecker : WinChecker {
 
     override fun findWinningLine(board: Board, player: Player): IntArray? {
-        // Build the player's occupancy bitmask
-        val playerMask = board.buildMask { state -> player.owns(state) }
+        // Build the player's occupancy bitmask by iterating all 27 flat indices
+        var playerMask = 0
+        val flat = board.getFlat()
+        flat.forEachIndexed { index, cellState ->
+            if (player.owns(cellState)) {
+                playerMask = playerMask or (1 shl index)
+            }
+        }
 
         // Check all 49 precomputed masks
         WinningLinesTable.ALL_MASKS.forEachIndexed { lineIndex, winMask ->

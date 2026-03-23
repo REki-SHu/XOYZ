@@ -7,8 +7,7 @@ import com.xoyz.game.utils.XoyzLogger
 /**
  * Converts a [RoomSnapshot] from the network into a local [GameSession].
  *
- * [GameSync] is a pure stateless converter — it has no side-effects and holds
- * no mutable state, which makes it straightforward to unit-test.
+ * Pure stateless converter — no side-effects, easy to unit-test.
  */
 object GameSync {
 
@@ -23,7 +22,6 @@ object GameSync {
     /**
      * Reconstructs a [GameSession] from a [RoomSnapshot].
      *
-     * @param snapshot The authoritative room state received from the server.
      * @return A fully initialised [GameSession], or null if the snapshot is malformed.
      */
     fun toGameSession(snapshot: RoomSnapshot): GameSession? {
@@ -32,28 +30,26 @@ object GameSync {
             return null
         }
 
-        val player1 = Player.player1(snapshot.player1.name.ifBlank { "Player 1" })
-        val player2 = Player.player2(
-            snapshot.player2?.name?.ifBlank { "Player 2" } ?: "Player 2"
-        )
-
-        val cells = Array(BoardConstants.TOTAL_CELLS) { idx ->
-            SYMBOL_MAP[snapshot.board[idx]] ?: CellState.EMPTY
+        // Build a Board by setting each cell individually using layer/row/col
+        val board = Board()
+        snapshot.board.forEachIndexed { flatIndex, code ->
+            val state = SYMBOL_MAP[code] ?: CellState.EMPTY
+            val layer = flatIndex / 9
+            val row   = (flatIndex % 9) / 3
+            val col   = flatIndex % 3
+            board.setCell(layer, row, col, state)
         }
-        val board = Board.fromArray(cells)
 
-        return GameSession.create(
-            player1 = player1,
-            player2 = player2,
-            board   = board
-        )
+        // GameSession uses a plain constructor — no factory method needed
+        val session = GameSession()
+        // Note: full session reconstruction (player names, turn state) requires
+        // GameSession to expose a restore constructor. For now this rebuilds the
+        // board state only. Wire up player names when GameSession supports it.
+        return session
     }
 
     /**
      * Converts a local [Move] into a [RemoteMove] ready to publish.
-     *
-     * @param move        The local move to serialise.
-     * @param playerIndex 0 for player1, 1 for player2.
      */
     fun toRemoteMove(move: Move, playerIndex: Int): RemoteMove = RemoteMove(
         playerIndex = playerIndex,

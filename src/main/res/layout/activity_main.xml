@@ -1,55 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    Main menu layout.
-    A vertical LinearLayout with the game title and two action buttons.
--->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="32dp"
-    android:background="@color/background_dark">
-
-    <!-- Title -->
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="XOYZ"
-        android:textSize="72sp"
-        android:textStyle="bold"
-        android:textColor="@color/player1_primary"
-        android:layout_marginBottom="8dp" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:gravity="center"
+              android:padding="32dp"
+              android:background="@color/background_dark">
 
     <TextView
-        android:id="@+id/tv_subtitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="3D Tic-Tac-Toe"
-        android:textSize="18sp"
-        android:textColor="#AAAAAA"
-        android:layout_marginBottom="64dp" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="XOYZ"
+            android:textSize="72sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="8dp" />
 
-    <!-- Local game button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_local_game"
-        android:layout_width="240dp"
-        android:layout_height="56dp"
-        android:text="Local Game"
-        android:textSize="16sp"
-        android:onClick="onLocalGameClicked"
-        android:layout_marginBottom="16dp" />
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3D Tic-Tac-Toe"
+            android:textSize="16sp"
+            android:textColor="#AAAAAA"
+            android:layout_marginBottom="56dp" />
 
-    <!-- Multiplayer button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_multiplayer"
-        android:layout_width="240dp"
-        android:layout_height="56dp"
-        android:text="Multiplayer"
-        android:textSize="16sp"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:onClick="onMultiplayerClicked" />
+    <Button
+            android:id="@+id/btnLocalGame"
+            android:layout_width="260dp"
+            android:layout_height="56dp"
+            android:text="Local Game"
+            android:textSize="18sp"
+            android:layout_marginBottom="16dp" />
+
+    <Button
+            android:id="@+id/btnMultiplayer"
+            android:layout_width="260dp"
+            android:layout_height="56dp"
+            android:text="Multiplayer (Soon)"
+            android:textSize="18sp"
+            android:enabled="false"
+            android:layout_marginBottom="16dp" />
+
+    <Button
+            android:id="@+id/btnRules"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="260dp"
+            android:layout_height="56dp"
+            android:text="How to Play"
+            android:textSize="18sp" />
 
 </LinearLayout>
