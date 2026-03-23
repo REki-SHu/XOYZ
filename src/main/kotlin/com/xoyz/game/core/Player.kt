@@ -1,33 +1,32 @@
 package com.xoyz.game.core
 
 /**
- * Represents a player in the XOYZ game.
+ * Represents one of the 4 independent symbol-players in XOYZ.
  *
- * @property id      Unique player identifier (1 or 2).
- * @property name    Display name chosen by the player.
- * @property symbols The two symbols this player is allowed to place.
+ * Each player owns exactly ONE symbol (X, O, Y, or Z).
+ * A line of 3 identical symbols wins for that player.
+ *
+ * @property id     1..4
+ * @property name   Display name (defaults to the symbol name)
+ * @property symbol The single CellState this player places
  */
 data class Player(
     val id: Int,
     val name: String,
-    val symbols: Set<CellState>
+    val symbol: CellState
 ) {
     init {
-        require(id in 1..2)            { "Player id must be 1 or 2, was $id" }
-        require(symbols.size == 2)     { "Each player must have exactly 2 symbols" }
-        require(CellState.EMPTY !in symbols) { "EMPTY is not a valid player symbol" }
+        require(id in 1..4)            { "Player id must be 1..4, was $id" }
+        require(symbol != CellState.EMPTY) { "EMPTY is not a valid player symbol" }
     }
 
-    /** Returns true if this player owns [symbol]. */
-    fun owns(symbol: CellState): Boolean = symbol in symbols
+    /** Returns true if this player owns [state]. */
+    fun owns(state: CellState): Boolean = state == symbol
 
     companion object {
-        /** Default Player 1 with symbols X and Y. */
-        fun player1(name: String = "Player 1"): Player =
-            Player(id = 1, name = name, symbols = setOf(CellState.X, CellState.Y))
-
-        /** Default Player 2 with symbols O and Z. */
-        fun player2(name: String = "Player 2"): Player =
-            Player(id = 2, name = name, symbols = setOf(CellState.O, CellState.Z))
+        fun x(name: String = "X") = Player(1, name, CellState.X)
+        fun o(name: String = "O") = Player(2, name, CellState.O)
+        fun y(name: String = "Y") = Player(3, name, CellState.Y)
+        fun z(name: String = "Z") = Player(4, name, CellState.Z)
     }
 }

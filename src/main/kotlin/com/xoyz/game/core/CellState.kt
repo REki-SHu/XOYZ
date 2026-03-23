@@ -7,6 +7,6 @@ enum class CellState(val symbol: String) {
     Y("Y"),
     Z("Z");
 
-    val isPlayer1 get() = this == X || this == Y
-    val isPlayer2 get() = this == O || this == Z
+    /** True if this is an actual placed symbol (not empty). */
+    val isPlaced: Boolean get() = this != EMPTY
 }

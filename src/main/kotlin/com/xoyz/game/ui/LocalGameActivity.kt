@@ -18,7 +18,6 @@ class GameActivity : AppCompatActivity() {
     private lateinit var session: GameSession
     private lateinit var cellButtons: Array<Array<Array<Button>>>
     private lateinit var tvTurnIndicator: TextView
-    private lateinit var tvLayerLabel: Array<TextView>
     private var currentLayer = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,19 +25,14 @@ class GameActivity : AppCompatActivity() {
         setContentView(R.layout.activity_local_game)
 
         session = GameSession()
-
         tvTurnIndicator = findViewById(R.id.tvTurnIndicator)
 
         // Layer tab buttons
-        val btnLayer0 = findViewById<Button>(R.id.btnLayer0)
-        val btnLayer1 = findViewById<Button>(R.id.btnLayer1)
-        val btnLayer2 = findViewById<Button>(R.id.btnLayer2)
+        findViewById<Button>(R.id.btnLayer0).setOnClickListener { switchLayer(0) }
+        findViewById<Button>(R.id.btnLayer1).setOnClickListener { switchLayer(1) }
+        findViewById<Button>(R.id.btnLayer2).setOnClickListener { switchLayer(2) }
 
-        btnLayer0.setOnClickListener { switchLayer(0) }
-        btnLayer1.setOnClickListener { switchLayer(1) }
-        btnLayer2.setOnClickListener { switchLayer(2) }
-
-        // Build 3 layers × 3×3 grids of buttons
+        // Build 3 × 3 × 3 cell button grid
         cellButtons = Array(3) { layer ->
             Array(3) { row ->
                 Array(3) { col ->
@@ -58,13 +52,14 @@ class GameActivity : AppCompatActivity() {
 
     private fun switchLayer(layer: Int) {
         currentLayer = layer
-
         val grids = arrayOf(
             findViewById<View>(R.id.gridLayer0),
             findViewById<View>(R.id.gridLayer1),
             findViewById<View>(R.id.gridLayer2)
         )
-        grids.forEachIndexed { i, g -> g.visibility = if (i == layer) View.VISIBLE else View.GONE }
+        grids.forEachIndexed { i, g ->
+            g.visibility = if (i == layer) View.VISIBLE else View.GONE
+        }
     }
 
     private fun onCellTapped(layer: Int, row: Int, col: Int) {
@@ -74,23 +69,26 @@ class GameActivity : AppCompatActivity() {
             return
         }
 
-        // Update button text
         val state = session.board.getCell(layer, row, col)
-        cellButtons[layer][row][col].text = state.symbol
-        cellButtons[layer][row][col].isEnabled = false
+        cellButtons[layer][row][col].apply {
+            text = state.symbol
+            isEnabled = false
+            // Colour-code each symbol
+            setTextColor(symbolColor(state))
+        }
 
         when (session.status) {
-            GameStatus.PLAYER1_WINS -> showGameOver("Player 1 Wins! 🎉")
-            GameStatus.PLAYER2_WINS -> showGameOver("Player 2 Wins! 🎉")
-            GameStatus.DRAW -> showGameOver("It's a Draw!")
-            else -> updateTurnIndicator()
+            GameStatus.X_WINS  -> showGameOver("X wins! 🎉")
+            GameStatus.O_WINS  -> showGameOver("O wins! 🎉")
+            GameStatus.Y_WINS  -> showGameOver("Y wins! 🎉")
+            GameStatus.Z_WINS  -> showGameOver("Z wins! 🎉")
+            GameStatus.DRAW    -> showGameOver("It's a Draw!")
+            else               -> updateTurnIndicator()
         }
     }
 
     private fun updateTurnIndicator() {
-        val playerNum = if (session.isPlayer1Turn) 1 else 2
-        val symbols = if (session.isPlayer1Turn) "X / Y" else "O / Z"
-        tvTurnIndicator.text = "Player $playerNum's turn  ($symbols)"
+        tvTurnIndicator.text = "${session.currentSymbol.symbol}'s turn"
     }
 
     private fun showGameOver(message: String) {
@@ -113,6 +111,16 @@ class GameActivity : AppCompatActivity() {
                 for (col in 0..2) {
                     cellButtons[layer][row][col].text = ""
                     cellButtons[layer][row][col].isEnabled = true
+                    cellButtons[layer][row][col].setTextColor(0xFFFFFFFF.toInt())
                 }
+    }
+
+    /** Returns a distinct colour per symbol so players can tell them apart. */
+    private fun symbolColor(state: CellState): Int = when (state) {
+        CellState.X -> 0xFF1A73E8.toInt() // blue
+        CellState.O -> 0xFFE53935.toInt() // red
+        CellState.Y -> 0xFF43A047.toInt() // green
+        CellState.Z -> 0xFFFFA000.toInt() // amber
+        else        -> 0xFFFFFFFF.toInt() // white
     }
 }
